@@ -12,23 +12,31 @@ dynamodb = boto3.resource('dynamodb')\
 \
 table = dynamodb.Table('contact-list')\
 def lambda_handler(event, context):\
+    #Gets phone number of caller based on address from Amazon Connect\
     address = event\\\
         .get("Details", \{\})\\\
         .get("ContactData", \{\})\\\
         .get("CustomerEndpoint", \{\})\\\
         .get("Address", None)\
+        \
+    #Gets dynamotable values for 3 best vanity numbers    \
     phone = address\
     response = table.get_item(\
         Key=\{\
             'origin': phone\
         \}\
     )\
-    vanity1 = response['Item']['Vanity1']\
-    vanity2 = response['Item']['Vanity2']\
-    vanity3 = response['Item']['Vanity3']\
-    test = "Hello"\
+    areaCode = phone[0] + phone[1] + phone [2] + phone [3] + phone[4]\
+    vanity1 = areaCode + response['Item']['Vanity1']\
+    vanity2 = areaCode + response['Item']['Vanity2']\
+    vanity3 = areaCode + response['Item']['Vanity3']\
+    print (areaCode)\
+    #Returns the vanity values to Amazon connect to be read to the user\
     return \{'vanity1' : vanity1,\
         'vanity2' : vanity2,\
         'vanity3' : vanity3\
     \}\
-    }
+    \
+\
+    \
+}

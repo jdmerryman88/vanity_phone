@@ -7,15 +7,22 @@
 
 \f0\fs24 \cf0 import json\
 import boto3\
+#assigns dynamodb table as variable\
 dynamodb = boto3.resource("dynamodb")\
 table = dynamodb.Table("contact-list")\
+\
+#Assigns alpha numeric combinations\
 alphaNum = [["0"],['1'],["A", "B", "C", "2"],["D", "E", "F", "3"],["G", "H", "I", "4"],["J", "K", "L", "5"],["M", "N", "O","6"],\
             ["P","Q", "R", "S", "7"],["T", "U", "V", "8"], ["W", "X", "Y", "Z", "9"]]\
-            \
+\
+#Create an empty list for all of the possible combinations to be populated            \
 vanityNumNoArea = []\
 numNoArea = ""\
+bestVanity = []\
 \
 def lambda_handler(event, context):\
+    \
+    #Gets the phone number from Amazon Connect\
     address = event\\\
         .get("Details", \{\})\\\
         .get("ContactData", \{\})\\\
@@ -25,10 +32,12 @@ def lambda_handler(event, context):\
         raise("JSON object is invalid")\
         \
     put(address)\
-    \
+\
+#Creates all the comnbinations of numbers and letters for a specific phone\
 def put(address):\
     phoneNum = address\
     numNoArea = ""\
+    #Removes area code from number\
     n = 5\
     while n < len(phoneNum):\
         numNoArea = numNoArea + phoneNum[n]\
@@ -42,11 +51,51 @@ def put(address):\
                         for b in range(len(alphaNum[int(numNoArea[5])])):\
                             for c in range(len(alphaNum[int(numNoArea[6])])):\
                                 result = alphaNum[int(numNoArea[0])][i] + alphaNum[int(numNoArea[1])][x]+ alphaNum[int(numNoArea[2])][y]+alphaNum[int(numNoArea[3])][y]+ alphaNum[int(numNoArea[4])][a] + alphaNum[int(numNoArea[5])][b]+ alphaNum[int(numNoArea[6])][c]\
+                                \
                                 vanityNumNoArea.append(result)\
                                 \
-    table.put_item(Item=\{'origin': address, 'Vanity1' : vanityNumNoArea[0], 'Vanity2' : vanityNumNoArea[1], 'Vanity3' : vanityNumNoArea[2],\
-                        'Vanity4' : vanityNumNoArea[3], 'Vanity5' : vanityNumNoArea[4]\
-    \})\
+    \
+    #Counts number of pairs to get best vanity phone number\
+    count = 0\
+    length = len(vanityNumNoArea)\
+    for i in range(length):\
+        n =1\
+        j = 0\
+        m = 0\
+        k = 0\
+        while n < 6:\
+            letter = vanityNumNoArea[i][0]\
+            letter2 = vanityNumNoArea[i][1]\
+            letter3 = vanityNumNoArea[i][2]\
+            if letter == vanityNumNoArea[i][n]:\
+                j = j+1\
+                n += 1\
+            elif letter2 == vanityNumNoArea[i][n+1]:\
+                m += 0\
+                n += 1\
+            elif letter3 == vanityNumNoArea[i][n+1]:\
+                k += 1\
+                n = n+1\
+            else:\
+                n +=1\
+        k = k-1\
+        total = j + m + k\
+        if total >=4:\
+            bestVanity.insert(0, vanityNumNoArea[i])\
+        elif total >= 2:\
+            bestVanity.append(1,vanityNumNoArea[i])\
+        else:\
+            bestVanity.append(vanityNumNoArea[i])\
+            \
+    \
+    table.put_item(Item=\{'origin': address, 'Vanity1' : bestVanity[0], 'Vanity2' : bestVanity[1], 'Vanity3' : bestVanity[2],\
+                        'Vanity4' : bestVanity[3], 'Vanity5' : bestVanity[4]\})\
+    \
+        \
+                \
+                \
+    \
+    \
     return phoneNum\
     \
     \
