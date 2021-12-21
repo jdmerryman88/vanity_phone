@@ -1,0 +1,25 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2636
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww29140\viewh17380\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Vanity Phone Number Creation\
+\
+Overview\
+\
+This project takes the phone number of a caller from Amazon Connect and reports back to the caller the three best vanity phone numbers for their number. An additional two numbers are saved into a Dynamodb database paired with the callers phone number. This application uses an Amazon Connect contact flow with a dynamodb database and lambda functions to process the data. Python is used in the lambda functions to handle all of the computing of the data and to return the values. \
+\
+Development Languages\
+\
+This project utilizes Python, Amazon Lambda, and Dynamodb to create the working Amazon Connect Flow. The flow works by first telling the caller that three vanity phone numbers will be provided to them at the end of the call. During this process a lambda integration is used to send the caller's number to a lambda function to create all the number/ letter combinations possible for their phone number. The top five are selected and written to a dynamo database. A second lambda integration is then incorporated to return the three best vanity numbers to Amazon Connect to be read to the caller. \
+\
+Best Vanity Number Determination\
+\
+The best vanity number was determined by counting the number of duplicates in each phone number/ letter combination. The combinations that had the most duplicates were chosen to be the best vanity number. This could be further improved upon with more time and the ability to personalize the vanity number to the callers interests, name, business, etc. \
+\
+\
+Difficulties and Improvements\
+\
+In the future with more time allowed this project could be further improved. The first step in improving the project would be to make the code as efficient as possible by removing any unnecessary steps or variables within the code. Further improvement in the process would be to create a better method in order to determine the best vanity phone number. This could be achieved in a multitude of ways but a few that I would like to implement in the future are to personalize the vanity phone number for the caller or use an API to google or some other search engine to get the most searched for word in the vanity number list. In order to personalize the vanity number a step in the Amazon Connect Flow could be to ask the callers questions (ie. is this a business number?, what are your hobbies?, what is your favorite team or movie?). This further customization would allow for a more focused and descriptive search when determining the best vanity numbers. Also as mentioned about using a search engine list of most commonly used search terms would make determining the best vanity numbers better. Difficulties that I faced throughout this project included learning how to  implement an Amazon Connect flow and tie it to lambda function and dynamodb. As I had no experience working with Amazon Lambda functions, dynamodb or Amazon Connect prior to this project learning how each of those technologies worked individually and the together took a lot of research and learning to get a final implementation that worked. Learning to use these new technologies required a lot of reading and watching tutorial videos and then trial and error to get a working solution. The second biggest challenge I faced was determining a way to get the best vanity phone number because some phone number combinations don\'92t lend themselves to being a vanity number; especially when you have a 1 or 0 in the phone number as these two number do not correspond to any letters. In order to complete this project in the timeline allowed some shortcuts were made the biggest one was using a series of for loops to get all of the possible combinations for the phone number. This could be improved by creating a function to better handle this. }
